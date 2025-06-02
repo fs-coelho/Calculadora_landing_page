@@ -1,120 +1,92 @@
-// Selecionar o display
-let operacao = document.querySelector(".operacao");
-operacao.innerText = "oi";
+let operacaoDisplay = document.querySelector(".operacao");
+operacaoDisplay.textContent = "0";
 
-// Selecionar o resultado
-let resultado = document.querySelector(".resultado");
-resultado.innerText = "oi";
+let resultadoDisplay = document.querySelector(".resultado");
+resultadoDisplay.textContent = "0";
 
-// Espressão
-let expressaoAtual = "";
+let primeiraOperacao = "";
 
-//Verificar se foi feito algum calculo ??????????????????????????????????????????????
-let resultadoCalculo = false;
+let segundaOperacao = "";
 
-//Resposta
-let resposta = 0;
+let operador = "";
 
-// Função acionada
-function apertou(valor) {
-    console.log(valor);
+let resultado;
 
-    // Limpar
-    if (valor === "C"){
-        expressaoAtual = "";
-        operacao.textContent = "0";
-        resultado.textContent = "0"
-        resultadoCalculo = false;
-        return;
-    }
+let verificarResultado = false;
 
-    //Limpar o último caractere
-    if (valor === "CE") {
-        if (expressaoAtual.length > 1) {
-            expressaoAtual = expressaoAtual.slice(0, -1);
-        } else {
-            expressaoAtual = "";
-        }
-        operacao.textContent = expressaoAtual === "" ? "0": expressaoAtual;
-        return;
-    }
 
-    //Sinal de = chamamos a função calcular
-    if (valor === "=") {
-        calcular();
+
+
+
+function apertou (valor) {
+    if (valor === "C") {
+        operacaoDisplay.textContent = "0";
+        resultadoDisplay.textContent = "0";
+        primeiraOperacao = "";
+        segundaOperacao = "";
+        operador = "";
+        verificarResultado = false;
         return;
     }
 
 
-    //Fazedo aparecer no display
-    if (operacao.textContent === "0") {
-        expressaoAtual = valor;
-    }else {
-        expressaoAtual += valor;
-    }
-    operacao.textContent = expressaoAtual;
-
-    console.log(expressaoAtual, "aqui");
+   if (primeiraOperacao === "" && (valor === "/" || valor === "*" || valor === "+" || valor === "%")) {
+    return;
+   } else if (valor === "/" || valor === "*" || valor === "+" || valor === "%" || valor === "-") {
+        if (verificarResultado && (valor === "/" || valor === "*" || valor === "+" || valor === "%" || valor === "-")) {
+            primeiraOperacao = resultado.toString();
+            operacaoDisplay.textContent = resultado;
+            operacaoDisplay.textContent += valor;
+            resultadoDisplay.textContent = "0";
+            operador = valor;
+            verificarResultado = false;
+            return;
+   }
+    operador = valor;
+    operacaoDisplay.textContent += valor;
+    return;
+   } else if (operador === "" && operacaoDisplay.textContent === "0") {
+    operacaoDisplay.textContent = valor;
+    primeiraOperacao = valor;
+    return;
+   } else if (operador === "") {
+    operacaoDisplay.textContent += valor;
+    primeiraOperacao += valor;
+    return;
+   } else if (operador !== "" && (valor === "/" || valor === "*" || valor === "+" || valor === "%" || valor === "-")) {
+    return;
+   } else if (operador !== "") {
+    operacaoDisplay.textContent += valor;
+    segundaOperacao += valor;
+    return;
+   }  
 }
 
 
 function calcular() {
-    //Expressão vazia, não fazemos nada
-    if (expressaoAtual === ""){
-        resultado.textContent = "0";
-        return;        
-    }
-
-    if (resultado > 0){
-        operacao.textContent = resposta;
-    }
-
-    let operadores = ["+", "-", "*", "/", "%"];
-    let operadorEncontrado = "";
-    let indiceOperador = "";
-
-    for (let indice = 0; indice < expressaoAtual.length; indice++) { // passa pela expressao
-        console.log(expressaoAtual[indice]);
-        let acharOperador = expressaoAtual[indice];//caracter
-        if (operadores.includes(acharOperador)){//verifica se o operador esta na lista de operadores, se tiver adiocona esse operador e pega o indice
-            indiceOperador = indice;
-            operadorEncontrado = acharOperador;
-            break;
+    if (primeiraOperacao !== "" && segundaOperacao !== "" && operador !== "") {
+        switch (operador) {
+            case "+":
+                resultado = Number(primeiraOperacao) + Number(segundaOperacao);
+                break;
+            case "-":
+                resultado = Number(primeiraOperacao) - Number(segundaOperacao);
+                break;
+            case "*":
+                resultado = Number(primeiraOperacao) * Number(segundaOperacao);
+                break;
+            case "/":
+                resultado = Number(primeiraOperacao) / Number(segundaOperacao);
+                break;
+            default:
+                resultado = "Erro";
         }
     }
 
-    //Separando a primeira parte da segunda
-    let parteEsquerda = Number(expressaoAtual.substring(0, indiceOperador));
-    let parteDireita = Number(expressaoAtual.substring(indiceOperador + 1));
-    console.log("parte esquerda", parteEsquerda);
-    console.log("parte direita", parteDireita);
-    console.log("operador", operadorEncontrado);
+    resultadoDisplay.textContent = resultado;
+    primeiraOperacao = resultado.toString();
+    segundaOperacao = "";
+    operador = "";
+    verificarResultado = true;
 
-    //calculo    
-    switch(operadorEncontrado) {
-        case "+":
-            resposta = parteEsquerda + parteDireita;
-            resultado.textContent = resposta;
-            operacao.textContent = resposta;
-            expressaoAtual = resposta;
-            break;
-        case "-":
-            resposta = parteEsquerda - parteDireita;
-            resultado.textContent = resposta;
-            operacao.textContent = resposta;
-            expressaoAtual = resposta;
-            break;
-        case "*":
-            resposta = parteEsquerda * parteDireita;
-            resultado.textContent = resposta;
-            operacao.textContent = resposta;
-            expressaoAtual = resposta;
-            break;
-        case "/":
-            resposta = parteEsquerda / parteDireita;
-            resultado.textContent = resposta;
-            operacao.textContent = resposta;
-            expressaoAtual = resposta;
-            break;
-    }
 }
