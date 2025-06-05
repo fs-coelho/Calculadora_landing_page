@@ -19,7 +19,7 @@ let verificarResultado = false;
 
 
 function apertou (valor) {
-    // Limpeza
+    // Limpar ------------------------------------------------------------------------------------------------------------------------------
     if (valor === "C") {
         operacaoDisplay.textContent = "0";
         resultadoDisplay.textContent = "0";
@@ -29,6 +29,28 @@ function apertou (valor) {
         verificarResultado = false;
         return;
     }
+
+    if (valor === "CE"){
+        if (operacaoDisplay.textContent.length <= 1) {
+            primeiraOperacao = "";
+            operacaoDisplay.textContent = "0";
+            return;
+        } else if (operador === "") {
+            primeiraOperacao = primeiraOperacao.slice(0,-1);
+            operacaoDisplay.textContent = operacaoDisplay.textContent.slice(0,-1);
+            return;
+        } else if ( primeiraOperacao !== "" && operador !== "" && segundaOperacao === "") {
+            operador = "";
+            operacaoDisplay.textContent = operacaoDisplay.textContent.slice(0,-1);
+            return;
+        } else {
+            segundaOperacao = segundaOperacao.slice(0,-1);
+            operacaoDisplay.textContent = operacaoDisplay.textContent.slice(0,-1);
+            return;
+        }
+    }
+    // Limpar ------------------------------------------------------------------------------------------------------------------------------
+
 
 
    if (primeiraOperacao === "" && (valor === "/" || valor === "*" || valor === "+" || valor === "%" || valor === '+/-')) {
@@ -97,15 +119,27 @@ function calcular() {
         switch (operador) {
             case "+":
                 resultado = Number(primeiraOperacao) + Number(segundaOperacao);
+                if (resultado % 1 !== 0) {
+                    resultado = resultado.toFixed(2)
+                }
                 break;
             case "-":
                 resultado = Number(primeiraOperacao) - Number(segundaOperacao);
+                if (resultado % 1 !== 0) {
+                    resultado = resultado.toFixed(2)
+                }
                 break;
             case "*":
                 resultado = Number(primeiraOperacao) * Number(segundaOperacao);
+                if (resultado % 1 !== 0) {
+                    resultado = resultado.toFixed(2)
+                }
                 break;
             case "/":
                 resultado = Number(primeiraOperacao) / Number(segundaOperacao);
+                if (resultado % 1 !== 0) {
+                    resultado = resultado.toFixed(2)
+                }
                 break;
             default:
                 resultado = "Erro";
